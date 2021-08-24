@@ -25,7 +25,7 @@ public:
     }
 
     int get(int key) {
-        if(curSize = 0){
+        if(curSize == 0){
             return -1;
         }
         Mymap* searchNode = (Mymap*) malloc(sizeof (Mymap));
@@ -44,18 +44,26 @@ public:
                     searchNode->next->pre = searchNode->pre;
                     searchNode->pre->next = searchNode->next;
                 }
+                Mymap* addNode = (Mymap*) malloc(sizeof (Mymap));
+                addNode->key = key;
+                addNode->value = searchNode->value;
+                addNode->pre = LRU;
+                addNode->next = nullptr;
+                LRU->next = addNode;
+                LRU = addNode;
             }else{
                 if(capacity != 1){
                     searchNode->next->pre = nullptr;
+                    Mymap* addNode = (Mymap*) malloc(sizeof (Mymap));
+                    addNode->key = key;
+                    addNode->value = searchNode->value;
+                    addNode->pre = LRU;
+                    addNode->next = nullptr;
+                    LRU->next = addNode;
+                    LRU = addNode;
                 }
             }
-            Mymap* addNode = (Mymap*) malloc(sizeof (Mymap));
-            addNode->key = key;
-            addNode->value = searchNode->value;
-            addNode->pre = LRU;
-            addNode->next = nullptr;
-            LRU->next = addNode;
-            LRU = addNode;
+
 
             return searchNode->value;
         }
@@ -95,10 +103,10 @@ public:
                 LRU = curNode;
                 Mymap* deleteNode = (Mymap*) malloc(sizeof (Mymap));
                 deleteNode = curNode;
-                int target = deleteNode->value;
+                int target = deleteNode->key;
                 while(deleteNode->pre){
                     deleteNode = deleteNode->pre;
-                    target = deleteNode->value;
+                    target = deleteNode->key;
                 }
                 deleteNode->next->pre = nullptr;
                 free(deleteNode);
@@ -117,16 +125,15 @@ public:
 };
 
 int main(){
-    LRUCache* lRUCache = new LRUCache(3);
-    lRUCache->put(1, 1); // 缓存是 {1=1}
-    lRUCache->put(2, 2); // 缓存是 {1=1, 2=2}
-    cout << lRUCache->get(1) << endl;    // 返回 1
-    lRUCache->put(3, 3); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
+    LRUCache* lRUCache = new LRUCache(1);
+//    lRUCache->put(1, 1); // 缓存是 {1=1}
+    lRUCache->put(2, 1); // 缓存是 {1=1, 2=2}
+//    cout << lRUCache->get(1) << endl;    // 返回 1
+//    lRUCache->put(3, 3); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
     cout << lRUCache->get(2) << endl;    // 返回 -1 (未找到)
-    lRUCache->put(4, 4); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
-    lRUCache->put(2, 5);
+    lRUCache->put(3, 2); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
     cout << lRUCache->get(2) << endl;    // 返回 -1 (未找到)
     cout << lRUCache->get(3) << endl;    // 返回 3
-    cout << lRUCache->get(4) << endl;    // 返回 4
+//    cout << lRUCache->get(4) << endl;    // 返回 4
 
 }
