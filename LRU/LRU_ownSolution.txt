@@ -1,0 +1,90 @@
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <unordered_map>
+
+using namespace std;
+
+// 双向链表
+struct DLinkedNode{
+    int key, value;
+    DLinkedNode* pre;
+    DLinkedNode* next;
+    DLinkedNode():key(0), value(0), pre(nullptr), next(nullptr){}
+    DLinkedNode(int _key, int _value):key(_key), value(_value), pre(nullptr), next(nullptr){}
+};
+
+class LRUCache {
+private:
+    unordered_map<int, DLinkedNode*> cache;
+    int capacity;
+    int curSize;
+    DLinkedNode* head;
+    DLinkedNode* tail;
+
+public:
+    // 初始化LRU缓存，并且创建头尾伪结点
+    LRUCache(int _capacity) {
+        capacity = _capacity;
+        head = new DLinkedNode();
+        tail = new DLinkedNode();
+        head->next = tail;
+        tail->pre = head;
+        curSize = 0;
+    }
+
+    int get(int key) {
+        if(cache.count(key)){
+            // 找到关键词则返回对应值，并且更新列表
+            DLinkedNode* refreshNode = cache[key];
+            RefreshLinkedList(refreshNode);
+            return refreshNode->value;
+        }else{
+            return -1;
+        }
+    }
+
+    void put(int key, int value) {
+        if(!cache.count(key)){
+            DLinkedNode* newNode = new DLinkedNode(key, value);
+            cache[key] = newNode;
+            AddNode(newNode);   //将结点加入双向链表当中
+            curSize++;
+            // 如果容量不够则删除最久未使用的结点，即头节点后一个结点
+            if(curSize > capacity){
+                DLinkedNode* deleteNode = head->next;
+                DeleteNode();
+                cache.erase(deleteNode->key);
+                delete deleteNode;
+                curSize--;
+            }
+        }else{
+            // 找到了关键词则修改值，并且更新链表
+            DLinkedNode* modifyNode = cache[key];
+            modifyNode->value = value;
+            RefreshLinkedList(modifyNode);
+        }
+    }
+
+    // 将新加入结点添加至尾结点前方
+    void AddNode(DLinkedNode* addNode){
+        tail->pre->next = addNode;
+        addNode->pre = tail->pre;
+        addNode->next = tail;
+        tail->pre = addNode;
+    }
+
+    // 删除最久未使用的结点
+    void DeleteNode(){
+        DLinkedNode* deleteNode = head->next;
+        head->next = deleteNode->next;
+        deleteNode->next->pre = head;
+    }
+
+    void RefreshLinkedList(DLinkedNode* refreshNode){
+        refreshNode->pre->next = refreshNode->next;
+        refreshNode->next->pre = refreshNode->pre;
+        AddNode(refreshNode);
+    }
+
+};
