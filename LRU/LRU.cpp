@@ -39,6 +39,7 @@ public:
         if(searchNode->key != key){
             return -1;
         }else{
+            // The node has pre node
             if(searchNode->pre){
                 if(searchNode->next){
                     searchNode->next->pre = searchNode->pre;
@@ -52,7 +53,8 @@ public:
                 LRU->next = addNode;
                 LRU = addNode;
             }else{
-                if(capacity != 1){
+                // Search the place of the first node
+                if(capacity != 1 && searchNode->next != nullptr){
                     searchNode->next->pre = nullptr;
                     Mymap* addNode = (Mymap*) malloc(sizeof (Mymap));
                     addNode->key = key;
@@ -77,7 +79,7 @@ public:
             LRU->pre = nullptr;
             LRU->next = nullptr;
             curSize++;
-        }else if(curSize < capacity){
+        }else if(curSize < capacity && get(key) == -1){
             // When the current capacity less than capacity
             // Create new node and add to the linklist
             Mymap* curNode = (Mymap*) malloc(sizeof (Mymap));
@@ -125,15 +127,18 @@ public:
 };
 
 int main(){
-    LRUCache* lRUCache = new LRUCache(1);
+    LRUCache* lRUCache = new LRUCache(2);
 //    lRUCache->put(1, 1); // 缓存是 {1=1}
     lRUCache->put(2, 1); // 缓存是 {1=1, 2=2}
+    lRUCache->get(2);
+    lRUCache->put(2,2);
 //    cout << lRUCache->get(1) << endl;    // 返回 1
 //    lRUCache->put(3, 3); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
     cout << lRUCache->get(2) << endl;    // 返回 -1 (未找到)
-    lRUCache->put(3, 2); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
+    lRUCache->put(1, 1); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
+    lRUCache->put(4, 1);
     cout << lRUCache->get(2) << endl;    // 返回 -1 (未找到)
-    cout << lRUCache->get(3) << endl;    // 返回 3
+//    cout << lRUCache->get(3) << endl;    // 返回 3
 //    cout << lRUCache->get(4) << endl;    // 返回 4
 
 }
