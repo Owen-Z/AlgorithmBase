@@ -7,3 +7,5 @@
 &emsp; 插入和查找都会更新双向链表的顺序，通过简单的插入和查找就可以找到其中的规律。插入新的元素时，只需要将它的前后更新；删除元素时，也只需要将前后结点进行更新。所以，每个有意义的元素都应该含有前后结点，于是就有了头尾伪结点的概念。  
 &emsp; 为了查找的方便，使用哈希表进行对应，一个键值对应一个结点，这样就可以加快和插入的速度，使得时间和空间复杂度能够降到O(1)。
 
+> LinkedHashMap的相关理解
+> https://leetcode-cn.com/problems/lru-cache/solution/yuan-yu-linkedhashmapyuan-ma-by-jeromememory/
