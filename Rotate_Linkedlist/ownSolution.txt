@@ -1,0 +1,50 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* rotateRight(ListNode* head, int k) {
+        // 如果链表不存在结点则直接返回该链表
+        if(head == nullptr){
+            return head;
+        }
+
+        int length = 1;
+        ListNode* countLengthNode = head;
+        while(countLengthNode->next){
+            length++;
+            countLengthNode = countLengthNode->next;
+        }
+
+        int realStep = k % length;  // 链表实际的移动步数
+
+        // 如果余数为0则返回原链表
+        if(realStep == 0){
+            return head;
+        }
+
+        ListNode* newHead = head;   // 新链表的头结点
+        for(int i = 0; i < (length - realStep); i++){
+            newHead = newHead->next;
+        }
+        ListNode* cutNode = head;
+        for(int i = 1; i < (length - realStep); i++){
+            cutNode = cutNode->next;
+        }
+        cutNode->next = nullptr;
+        
+        ListNode* newEnd = newHead;
+        while(newEnd->next){
+            newEnd = newEnd->next;
+        }
+        newEnd->next = head;
+        return newHead;
+    }
+};
