@@ -1,0 +1,28 @@
+class MaxQueue {
+    queue<int> que;
+    deque<int> deq;
+public:
+    MaxQueue() { }
+    int max_value() {
+        return deq.empty() ? -1 : deq.front();
+    }
+    void push_back(int value) {
+        que.push(value);
+        while(!deq.empty() && deq.back() < value)
+            deq.pop_back();
+        deq.push_back(value);
+    }
+    int pop_front() {
+        if(que.empty()) return -1;
+        int val = que.front();
+        if(val == deq.front())
+            deq.pop_front();
+        que.pop();
+        return val;
+    }
+};
+
+作者：jyd
+链接：https://leetcode-cn.com/problems/dui-lie-de-zui-da-zhi-lcof/solution/jian-zhi-offer-59-ii-dui-lie-de-zui-da-z-0pap/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

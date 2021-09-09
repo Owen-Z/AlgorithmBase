@@ -1,0 +1,77 @@
+/*
+ * 首先解题思路没有什么问题，但是对于数据结构知识的储备不够丰富，导致没有很好的完成测试
+ * 同时，对于一些想法的结构不一定非要用已知的结构，可以自己尝试建立结构去处理
+ * 算法题要多想实例去测试，不要急忙提交，多测试多写写用例，提高准确度
+ */
+
+#include <string>
+#include <cassert>
+#include <iostream>
+#include <queue>
+using namespace std;
+
+struct Node{
+    int value;
+    bool isbehind;
+    Node(int _value, bool _isbehind): value(_value), isbehind(_isbehind) {}
+};
+
+class MaxQueue {
+private:
+    queue<int> initQueue;
+    queue<Node*> helpQueue;
+    int checkNum = 1;
+public:
+    MaxQueue() {
+
+    }
+
+    int max_value() {
+        if(initQueue.size() == 0){
+            return -1;
+        }
+        // 不断在辅助队列中寻找不是已删除的最大值，找到后返回该值
+        while(!helpQueue.empty() && helpQueue.front()->isbehind){
+            helpQueue.pop();
+        }
+
+        return helpQueue.front()->value;
+    }
+
+    void push_back(int value) {
+        initQueue.push(value);
+        Node* node1 = new Node(value, false);
+        // 判断加入元素是否比辅助队列的尾元素数值大
+        // 如果是的话则修改尾元素，并重新加入元素
+        if(helpQueue.empty()){
+            helpQueue.push(node1);
+        }else if(value > helpQueue.back()->value){
+            int smallerNum = helpQueue.back()->value;
+            helpQueue.back()->value = value;
+            helpQueue.back()->isbehind = false;
+            Node* node2 = new Node(smallerNum, true);
+            helpQueue.push(node2);
+        }else{
+            helpQueue.push(node1);
+        }
+    }
+
+    int pop_front() {
+        if(initQueue.size() == 0){
+            return -1;
+        }
+        int front = initQueue.front();
+        initQueue.pop();
+        if(helpQueue.front()->value == front){
+            helpQueue.pop();
+        }
+        return front;
+    }
+};
+/**
+ * Your MaxQueue object will be instantiated and called as such:
+ * MaxQueue* obj = new MaxQueue();
+ * int param_1 = obj->max_value();
+ * obj->push_back(value);
+ * int param_3 = obj->pop_front();
+ */
