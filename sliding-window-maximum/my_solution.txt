@@ -1,0 +1,122 @@
+/*
+ * 运用辅助双向链表的方法解决问题
+ * 联系题目find_max_in_queue
+ */
+
+#include <string>
+#include <cassert>
+#include <iostream>
+#include <queue>
+#include <algorithm>
+#include <sstream>
+
+using namespace std;
+
+struct Node{
+    int value;
+    int index;
+    Node(int _value, int _index): value(_value), index(_index) {}
+};
+
+class Solution {
+private:
+    vector<int> outputVector;
+    deque<Node*> supportDeque;
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        // 当传入数组只有一个数据时直接返回该数组
+        if(nums.size() == 1){
+            return nums;
+        }
+
+        // 存入初始窗口数组
+        for(int i = 0; i< k ; i++){
+            // 当辅助队列的末尾比当前值小时，移除末尾值，放入当前值
+            while(!supportDeque.empty() && supportDeque.back()->value < nums[i]){
+                supportDeque.pop_back();
+            }
+            supportDeque.push_back(new Node(nums[i],i));
+        }
+        outputVector.push_back(supportDeque.front()->value);
+
+        // 遍历每个窗口、
+        for(int i = k; i < nums.size(); i++){
+
+            while(!supportDeque.empty() && supportDeque.front()->index <= i-k){
+                supportDeque.pop_front();
+            }
+            cout << supportDeque.front()->index <<  " ";
+            while(!supportDeque.empty() && supportDeque.back()->value < nums[i]){
+                supportDeque.pop_back();
+            }
+            supportDeque.push_back(new Node(nums[i], i));
+
+            outputVector.push_back(supportDeque.front()->value);
+        }
+
+        return outputVector;
+    }
+};
+
+void trimLeftTrailingSpaces(string &input) {
+    input.erase(input.begin(), find_if(input.begin(), input.end(), [](int ch) {
+        return !isspace(ch);
+    }));
+}
+
+void trimRightTrailingSpaces(string &input) {
+    input.erase(find_if(input.rbegin(), input.rend(), [](int ch) {
+        return !isspace(ch);
+    }).base(), input.end());
+}
+
+vector<int> stringToIntegerVector(string input) {
+    vector<int> output;
+    trimLeftTrailingSpaces(input);
+    trimRightTrailingSpaces(input);
+    input = input.substr(1, input.length() - 2);
+    stringstream ss;
+    ss.str(input);
+    string item;
+    char delim = ',';
+    while (getline(ss, item, delim)) {
+        output.push_back(stoi(item));
+    }
+    return output;
+}
+
+int stringToInteger(string input) {
+    return stoi(input);
+}
+
+string integerVectorToString(vector<int> list, int length = -1) {
+    if (length == -1) {
+        length = list.size();
+    }
+
+    if (length == 0) {
+        return "[]";
+    }
+
+    string result;
+    for(int index = 0; index < length; index++) {
+        int number = list[index];
+        result += to_string(number) + ", ";
+    }
+    return "[" + result.substr(0, result.length() - 2) + "]";
+}
+
+int main() {
+    string line;
+    while (getline(cin, line)) {
+        vector<int> nums = stringToIntegerVector(line);
+        getline(cin, line);
+        int k = stringToInteger(line);
+
+        vector<int> ret = Solution().maxSlidingWindow(nums, k);
+
+        string out = integerVectorToString(ret);
+        cout << out << endl;
+    }
+    return 0;
+}

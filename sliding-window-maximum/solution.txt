@@ -1,0 +1,33 @@
+// 不需要将下标和数值构成新结点，可以只存下标，在nums中直接取值
+
+class Solution {
+public
+    vectorint maxSlidingWindow(vectorint& nums, int k) {
+        int n = nums.size();
+        dequeint q;
+        for (int i = 0; i  k; ++i) {
+            while (!q.empty() && nums[i] = nums[q.back()]) {
+                q.pop_back();
+            }
+            q.push_back(i);
+        }
+
+        vectorint ans = {nums[q.front()]};
+        for (int i = k; i  n; ++i) {
+            while (!q.empty() && nums[i] = nums[q.back()]) {
+                q.pop_back();
+            }
+            q.push_back(i);
+            while (q.front() = i - k) {
+                q.pop_front();
+            }
+            ans.push_back(nums[q.front()]);
+        }
+        return ans;
+    }
+};
+
+作者：LeetCode-Solution
+链接：httpsleetcode-cn.comproblemssliding-window-maximumsolutionhua-dong-chuang-kou-zui-da-zhi-by-leetco-ki6m
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
